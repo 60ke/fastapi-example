@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+
+    <!-- 输入框，用于输入消息内容 -->
+    <input type="text" id="messageInput" placeholder="Enter your message here">
+    
+    <!-- 按钮，点击后发送消息 -->
+    <button onclick="sendMessage()">Send Message</button>
+    
+    <div id="response"></div> <!-- 用于显示服务器返回的时间 -->
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+
+        // WebSocket 打开时的处理函数
+        ws.onopen = function() {
+            console.log("Connected to WebSocket server");
+        };
+
+        // WebSocket 接收到消息时的处理函数
+        ws.onmessage = function(event) {
+            const response = JSON.parse(event.data);
+            document.getElementById("response").innerText = "Server Time: " + response.server_time;
+        };
+
+        // WebSocket 关闭时的处理函数
+        ws.onclose = function() {
+            console.log("Disconnected from WebSocket server");
+        };
+
+        // 发送消息的函数
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value;
+            if (message.trim() !== "") {
+                ws.send(message); // 发送输入框中的消息
+                document.getElementById("messageInput").value = ""; // 清空输入框
+            } else {
+                alert("Please enter a message!");
+            }
+        }
+    </script>
+</body>
+</html>
